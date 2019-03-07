@@ -139,12 +139,7 @@ ngx_http_csrf_prevent_header_filter(ngx_http_request_t *r)
     //ngx_log_stderr(0, "Host: %s", host);
 
     u_char* str = NULL;
-    if (r->headers_in.referer)
-    {
-        str = r->headers_in.referer->value.data;
-        //ngx_log_stderr(0, "Referer set: %s", str);
-    }
-    else
+    if (!r->headers_in.referer)
     {
         u_char *origin_str = (u_char *) "Origin";
         ngx_table_elt_t* origin = search_headers_in(r, origin_str, ngx_strlen(origin_str));
@@ -153,6 +148,11 @@ ngx_http_csrf_prevent_header_filter(ngx_http_request_t *r)
             str = origin->value.data;
             //ngx_log_stderr(0, "Origin set: %s", str);
         }
+    }
+    else
+    {
+        str = r->headers_in.referer->value.data;
+        //ngx_log_stderr(0, "Referer set: %s", str);
     }
 
     if (str)
